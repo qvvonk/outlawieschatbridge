@@ -8,7 +8,10 @@ from .translater import Translater
 
 class App:
     def __init__(self):
-        self.translater = Translater('http://103.177.249.8:5000')
+        self.translater = Translater(
+            folder_id=os.environ['YANDEX_FOLDER_ID'],
+            api_key=os.environ['YANDEX_API_KEY']
+        )
         self.tg = Bot(os.environ['TG_TOKEN'])
         self.tg_dp = Dispatcher()
         self.tg_dp.include_router(tg_router)

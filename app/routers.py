@@ -25,7 +25,7 @@ async def send_to_ds(m: Message, app: App, translater: Translater):
     url = f'https://api.telegram.org/file/bot{app.tg.token}/{file.file_path}'
 
     try:
-        translated = await translater.translate(m.text, orig_lang='ru', to='en')
+        translated = await translater.translate(m.text, to='en')
     except Exception:
         import traceback
         print(traceback.format_exc())
