@@ -33,7 +33,5 @@ class Translater:
                 },
                 timeout=ClientTimeout(total=2.0),
             )
-            r = await res.text()
-            print(r)
             json = await res.json()
             return json['translatedText']

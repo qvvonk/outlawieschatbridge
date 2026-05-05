@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from aiogram import Router
 from discord.utils import escape_markdown
 from discord import Embed
+from discord.ext import commands
 from aiogram.types import ChatMemberMember, ChatMemberOwner, ChatMemberAdministrator
 
 if TYPE_CHECKING:
@@ -60,3 +61,9 @@ async def send_to_ds(m: Message, app: App, translater: Translater):
         inline=False,
     )
     await app.ds.get_channel(app.tg_to_ds_chats[(m.chat.id, m.message_thread_id)]).send(embed=embed)
+
+
+class DsCog(commands.Cog):
+    def __init__(self, app: App):
+        self.app = app
+        super().__init__()
