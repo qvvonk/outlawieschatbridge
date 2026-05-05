@@ -1,20 +1,16 @@
-import asyncio
-
 from aiogram import Bot, Dispatcher
 from discord import Client, Intents
 import asyncio
 import os
 from .routers import router as tg_router
+from .translater import Translater
 
 
 class App:
     def __init__(self):
-        self.workflow_data = {
-            'app': self,
-        }
-
+        self.translater = Translater('http://103.177.249.8:5000')
         self.tg = Bot(os.environ['TG_TOKEN'])
-        self.tg_dp = Dispatcher(**self.workflow_data)
+        self.tg_dp = Dispatcher()
         self.tg_dp.include_router(tg_router)
 
         self.ds_intents = Intents.default()
@@ -27,6 +23,11 @@ class App:
         self.tg_to_ds_chats = {
             (-1002373875544, None): 1499026067912917192
         }
+        self.workflow_data = {
+            'app': self,
+            'translater': self.translater,
+        }
+        self.tg_dp.workflow_data = self.workflow_data
 
     async def start(self):
         self.tg_task = asyncio.create_task(self.tg_dp.start_polling(self.tg))

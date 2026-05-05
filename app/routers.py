@@ -7,6 +7,7 @@ from aiogram.types import ChatMemberMember, ChatMemberOwner, ChatMemberAdministr
 
 if TYPE_CHECKING:
     from .main import App
+    from .translater import Translater
     from aiogram.types import Message
 
 router = Router()
@@ -16,11 +17,18 @@ router = Router()
     lambda m: m.text,
     lambda m, app: (m.chat.id, m.message_thread_id) in app.tg_to_ds_chats
 )
-async def send_to_ds(m: Message, app: App):
+async def send_to_ds(m: Message, app: App, translater: Translater):
     mem = await app.tg.get_chat_member(m.chat.id, m.from_user.id)
     photo = await m.from_user.get_profile_photos()
     file = await app.tg.get_file(photo.photos[-1][0].file_id)
     url = f'https://api.telegram.org/file/bot{app.tg.token}/{file.file_path}'
+
+    try:
+        translated = await translater.translate(m.text, orig_lang='ru', to='en')
+    except Exception:
+        import traceback
+        print(traceback.format_exc())
+        translated = None
 
     user_data = []
     if m.from_user.full_name:
@@ -36,7 +44,7 @@ async def send_to_ds(m: Message, app: App):
         user_data.append(f'({tag})')
 
     embed = Embed(
-        description=escape_markdown(m.text),
+        description=escape_markdown(translated if translated else m.text),
         color=0x2B2D31
     )
 
